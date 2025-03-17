@@ -11,7 +11,7 @@
 <body>
     <div class="app-container">
         <!-- Welcome Screen -->
-        <section id="welcome-screen" class="screen">
+        <section id="pantalla-bienvinguda" class="pantalla">
             <div class="header">
                 <h1>Figure Series Challenge</h1>
                 <p>Test your pattern recognition skills!</p>
@@ -24,7 +24,7 @@
                         <p>Choose a test to start the challenge</p>
                     </div>
                     <div class="card-content">
-                        <div id="test-list" class="test-list">
+                        <div id="llista-tests" class="test-list">
                             <!-- Tests will be loaded here -->
                             <div class="loading">Loading tests...</div>
                         </div>
@@ -37,7 +37,7 @@
                         <p>Top performers in the challenges</p>
                     </div>
                     <div class="card-content">
-                        <div id="high-scores" class="high-scores">
+                        <div id="llista-puntuacions" class="high-scores">
                             <!-- High scores will be loaded here -->
                             <div class="loading">Loading scores...</div>
                         </div>
@@ -58,16 +58,16 @@
         </section>
         
         <!-- Test Screen -->
-        <section id="test-screen" class="screen hidden">
+        <section id="pantalla-test" class="pantalla amagat">
             <div class="test-header">
                 <div class="test-info">
-                    <h1 id="test-name"></h1>
+                    <h1 id="nom-test"></h1>
                     <div class="test-meta">
                         <div class="progress-info">
-                            <span id="current-series">1</span> of <span id="total-series">5</span>
+                            <span id="serie-actual">1</span> of <span id="total-series">5</span>
                         </div>
                         <div class="score-info">
-                            Score: <span id="current-score">0</span>
+                            Score: <span id="puntuacio-actual">0</span>
                         </div>
                     </div>
                     <div class="progress-bar">
@@ -75,32 +75,32 @@
                     </div>
                 </div>
                 <div class="timer">
-                    <span id="timer-display">00:00</span>
+                    <span id="temps-restant">00:00</span>
                 </div>
             </div>
             
-            <div id="feedback-alert" class="feedback-alert hidden">
-                <h3 id="feedback-title"></h3>
-                <p id="feedback-message"></p>
+            <div id="alerta-feedback" class="feedback-alert amagat">
+                <h3 id="titol-feedback"></h3>
+                <p id="missatge-feedback"></p>
             </div>
             
             <div class="test-container">
-                <div id="series-container" class="series-container">
+                <div id="contenidor-serie" class="series-container">
                     <!-- Current series will be rendered here -->
                 </div>
                 
                 <div class="options-section">
                     <h3>Options:</h3>
-                    <div id="options-container" class="options-container">
+                    <div id="contenidor-opcions" class="options-container">
                         <!-- Options will be rendered here -->
                     </div>
                     
                     <div class="actions">
-                        <button id="shuffle-btn" class="btn btn-outline">
+                        <button id="btn-barreja" class="btn btn-outline">
                             <span class="icon">↻</span> Shuffle Options
                         </button>
-                        <button id="submit-btn" class="btn btn-primary" disabled>
-                            Submit Answer
+                        <button id="btn-retorna" class="btn btn-primary">
+                            Return to Home
                         </button>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
         </section>
         
         <!-- Score Screen -->
-        <section id="score-screen" class="screen hidden">
+        <section id="pantalla-puntuacio" class="pantalla amagat">
             <div class="score-card">
                 <div class="score-header">
                     <h2>Test Completed!</h2>
@@ -119,35 +119,35 @@
                     <div class="score-grid">
                         <div class="score-item">
                             <div class="score-icon">🏆</div>
-                            <div id="final-score" class="score-value">0</div>
+                            <div id="puntuacio-final" class="score-value">0</div>
                             <div class="score-label">Points</div>
                         </div>
                         
                         <div class="score-item">
                             <div class="score-icon">⏱️</div>
-                            <div id="time-spent" class="score-value">0:00</div>
+                            <div id="temps-invertit" class="score-value">0:00</div>
                             <div class="score-label">Time</div>
                         </div>
                     </div>
                     
-                    <form id="score-form" class="score-form">
+                    <form id="formulari-puntuacio" class="score-form">
                         <div class="form-group">
-                            <label for="player-name">Enter your name to save your score:</label>
-                            <input type="text" id="player-name" placeholder="Your name" required>
+                            <label for="nom-jugador">Enter your name to save your score:</label>
+                            <input type="text" id="nom-jugador" placeholder="Your name" required>
                         </div>
                         
-                        <button type="submit" id="save-score-btn" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary">
                             Save Score
                         </button>
                     </form>
                     
-                    <div id="save-success" class="save-success hidden">
+                    <div id="missatge-desar" class="save-success amagat">
                         <p>Your score has been saved successfully!</p>
                     </div>
                 </div>
                 
                 <div class="score-footer">
-                    <button id="return-btn" class="btn btn-outline">
+                    <button id="btn-retorna-puntuacio" class="btn btn-outline">
                         Return to Home
                     </button>
                 </div>
@@ -156,14 +156,6 @@
     </div>
     
     <!-- Load JavaScript files -->
-    <script src="js/models/figure.js"></script>
-    <script src="js/models/series.js"></script>
-    <script src="js/models/test.js"></script>
-    <script src="js/models/score.js"></script>
-    <script src="js/services/db-service.js"></script>
-    <script src="js/services/sample-data.js"></script>
-    <script src="js/ui/test-renderer.js"></script>
-    <script src="js/ui/drag-drop-handler.js"></script>
-    <script src="js/app.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
