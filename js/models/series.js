@@ -1,25 +1,28 @@
-/**
- * Representa una sèrie de figures.
- * @constructor
- * @param {string} id Identificador de la sèrie.
- * @param {Figure[]} sequence Seqüència de figures que formen el patró.
- * @param {Figure[]} options Opcions de figures per triar.
- * @param {number} correctPosition Índex de la figura correcta dins de l'array options.
- */
-function Series(id, sequence, options, correctPosition) {
-    this.id = id;
-    this.sequence = sequence;
-    this.options = options;
-    this.correctPosition = correctPosition;
+import BaseModel from "./base-model.js"
+
+class Series extends BaseModel {
+  constructor(id, sequence, options, correctPosition) {
+    super(id)
+    this.sequence = sequence
+    this.options = options
+    this.correctPosition = correctPosition
+  }
+
+  validateAnswer(figureId) {
+    return this.options[this.correctPosition].id === figureId
+  }
+
+  getCorrectFigure() {
+    return this.options[this.correctPosition]
+  }
+
+  shuffleOptions() {
+    for (let i = this.options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[this.options[i], this.options[j]] = [this.options[j], this.options[i]]
+    }
+  }
 }
 
-/**
- * Valida la resposta de la sèrie.
- * @param {string} figureId Identificador de la figura seleccionada.
- * @return {boolean} Retorna true si la resposta és correcta.
- */
-Series.prototype.validateAnswer = function(figureId) {
-    return this.options[this.correctPosition].id === figureId;
-};
+export default Series
 
-export default Series;
