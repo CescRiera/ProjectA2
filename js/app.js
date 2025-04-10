@@ -12,6 +12,7 @@ const App = (() => {
   let puntuacio = 0
   let tempsRestant = 0
   let timerInterval = null
+  let isSubmittingScore = false // Flag to prevent double submission
 
   const historialAccions = CollectionUtils.createStack()
   const accionsPendents = CollectionUtils.createQueue()
@@ -22,9 +23,7 @@ const App = (() => {
     try {
       const historial = historialAccions.getItems()
       localStorage.setItem("historialAccions", JSON.stringify(historial))
-    } catch (error) {
-      console.error("Error saving historial in webStorage:", error)
-    }
+    } catch (error) {}
   }
 
   const guardarProgresTest = () => {
@@ -50,9 +49,7 @@ const App = (() => {
           tempsRestant = progres.tempsRestant
         }
       }
-    } catch (error) {
-      console.error("Error restoring test progress from webStorage:", error)
-    }
+    } catch (error) {}
   }
 
   function elementExists(selector) {
@@ -62,7 +59,6 @@ const App = (() => {
   const registrarAccio = (accio) => {
     const timestamp = new Date().toISOString()
     historialAccions.push({ accio, timestamp })
-    console.log(`Acció registrada: ${accio} a ${timestamp}`)
     guardarHistorialEnWebStorage()
   }
 
@@ -84,10 +80,7 @@ const App = (() => {
                 const titolElement = document.getElementById('titol-feedback');
                 const missatgeElement = document.getElementById('missatge-feedback');
                 
-                if (!alerta || !titolElement || !missatgeElement) {
-                    console.error("Feedback elements not found");
-                    return;
-                }
+                if (!alerta || !titolElement || !missatgeElement) return;
                 
                 titolElement.textContent = missatge;
                 missatgeElement.textContent = tipus === 'exit' ? 'Bé fet!' : 'Resposta incorrecta, torna-ho a provar.';
@@ -115,8 +108,6 @@ const App = (() => {
   return {
     init: async function () {
       try {
-        console.log("Initializing application...")
-
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", () => {
             this.setupUI()
@@ -124,14 +115,10 @@ const App = (() => {
         } else {
           this.setupUI()
         }
-      } catch (error) {
-        console.error("Error initializing application:", error)
-      }
+      } catch (error) {}
     },
 
     setupUI: function () {
-      console.log("Setting up UI...")
-
       const elements = [
         "llista-tests",
         "llista-puntuacions",
@@ -145,8 +132,6 @@ const App = (() => {
         const element = document.getElementById(id)
         if (element) {
           elementsDOM.set(id, element)
-        } else {
-          console.warn(`Element '${id}' not found`)
         }
       })
 
@@ -155,17 +140,13 @@ const App = (() => {
       this.configurarEsdeveniments()
 
       processarAccionsPendents()
-
       registrarAccio("Aplicació inicialitzada")
     },
 
     carregarTests: async function () {
       try {
         const llistaTests = elementsDOM.get("llista-tests") || document.getElementById("llista-tests")
-        if (!llistaTests) {
-          console.error("Element 'llista-tests' not found in the DOM")
-          return
-        }
+        if (!llistaTests) return
 
         const tests = await DBService.getTests()
         llistaTests.innerHTML = ""
@@ -184,10 +165,8 @@ const App = (() => {
         })
 
         testElements.forEach((element) => llistaTests.appendChild(element))
-
         registrarAccio("Tests carregats")
       } catch (error) {
-        console.error("Error loading tests:", error)
         const llistaTests = elementsDOM.get("llista-tests") || document.getElementById("llista-tests")
         if (llistaTests) {
           llistaTests.innerHTML = '<div class="error">Error en carregar els tests</div>'
@@ -198,10 +177,7 @@ const App = (() => {
     carregarPuntuacions: async () => {
       try {
         const llistaPuntuacions = elementsDOM.get("llista-puntuacions") || document.getElementById("llista-puntuacions")
-        if (!llistaPuntuacions) {
-          console.error("Element 'llista-puntuacions' not found in the DOM")
-          return
-        }
+        if (!llistaPuntuacions) return
 
         const puntuacions = await DBService.getHighScores()
 
@@ -225,10 +201,8 @@ const App = (() => {
         ).join("")
 
         llistaPuntuacions.innerHTML = htmlPuntuacions
-
         registrarAccio("Puntuacions carregades")
       } catch (error) {
-        console.error("Error loading scores:", error)
         const llistaPuntuacions = elementsDOM.get("llista-puntuacions") || document.getElementById("llista-puntuacions")
         if (llistaPuntuacions) {
           llistaPuntuacions.innerHTML = '<div class="error">Error en carregar les puntuacions</div>'
@@ -244,10 +218,9 @@ const App = (() => {
           if (timerInterval) {
             clearInterval(timerInterval)
           }
+          sessionStorage.removeItem("progresTest")
           registrarAccio("Tornat a la pantalla principal")
         })
-      } else {
-        console.warn("Element 'btn-retorna' not found")
       }
 
       const btnRetornaPuntuacio =
@@ -255,6 +228,7 @@ const App = (() => {
       if (btnRetornaPuntuacio) {
         btnRetornaPuntuacio.addEventListener("click", () => {
           this.mostrarPantalla("pantalla-bienvinguda")
+          sessionStorage.removeItem("progresTest")
           registrarAccio("Tornat a la pantalla principal des de puntuació")
         })
       }
@@ -265,8 +239,6 @@ const App = (() => {
           this.barrejarOpcions()
           registrarAccio("Opcions barrejades")
         })
-      } else {
-        console.warn("Element 'btn-barreja' not found")
       }
 
       const formulariPuntuacio =
@@ -274,19 +246,17 @@ const App = (() => {
       if (formulariPuntuacio) {
         formulariPuntuacio.addEventListener("submit", (e) => {
           e.preventDefault()
-          this.desarPuntuacio()
+          // Prevent double submission
+          if (!isSubmittingScore) {
+            this.desarPuntuacio()
+          }
         })
-      } else {
-        console.warn("Element 'formulari-puntuacio' not found")
       }
     },
 
     mostrarPantalla: (pantallaId) => {
       const pantalles = document.querySelectorAll(".pantalla")
-      if (pantalles.length === 0) {
-        console.error("No elements with class 'pantalla' found")
-        return
-      }
+      if (pantalles.length === 0) return
 
       pantalles.forEach((p) => p.classList.add("amagat"))
 
@@ -294,8 +264,6 @@ const App = (() => {
       if (pantallaAMostrar) {
         pantallaAMostrar.classList.remove("amagat")
         registrarAccio(`Pantalla mostrada: ${pantallaId}`)
-      } else {
-        console.error(`Element with id '${pantallaId}' not found`)
       }
     },
 
@@ -319,10 +287,7 @@ const App = (() => {
     },
 
     mostrarSerieActual: function () {
-      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) {
-        console.error("Invalid test or series index")
-        return
-      }
+      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) return
 
       const serie = testActual.series[indexSerieActual]
 
@@ -333,10 +298,7 @@ const App = (() => {
       const contenedorSerie = document.getElementById("contenidor-serie")
       const contenedorOpcions = document.getElementById("contenidor-opcions")
 
-      if (!contenedorSerie || !contenedorOpcions) {
-        console.error("Required containers not found")
-        return
-      }
+      if (!contenedorSerie || !contenedorOpcions) return
 
       contenedorSerie.innerHTML = ""
       contenedorOpcions.innerHTML = ""
@@ -362,15 +324,11 @@ const App = (() => {
       }
 
       guardarProgresTest()
-
       registrarAccio(`Sèrie mostrada: ${indexSerieActual + 1}/${testActual.series.length}`)
     },
 
     processarDrop: function (figureId, dropZone) {
-      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) {
-        console.error("Invalid test state during drop processing")
-        return
-      }
+      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) return
 
       const serie = testActual.series[indexSerieActual]
 
@@ -433,6 +391,10 @@ const App = (() => {
         tempsInvertit.textContent = formatTime(testActual.timeLimit - tempsRestant)
       }
 
+      if (testActual) {
+        sessionStorage.removeItem("progresTest")
+      }
+
       this.mostrarPantalla("pantalla-puntuacio")
 
       if (testActual) {
@@ -442,16 +404,10 @@ const App = (() => {
     },
 
     iniciarTemporitzador: function () {
-      if (!testActual) {
-        console.error("Cannot start timer: no active test")
-        return
-      }
+      if (!testActual) return
 
       const tempsRestantElement = document.getElementById("temps-restant")
-      if (!tempsRestantElement) {
-        console.error("Element 'temps-restant' not found")
-        return
-      }
+      if (!tempsRestantElement) return
 
       tempsRestantElement.textContent = formatTime(tempsRestant)
 
@@ -469,20 +425,13 @@ const App = (() => {
     },
 
     barrejarOpcions: () => {
-      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) {
-        console.error("Cannot shuffle options: invalid test state")
-        return
-      }
+      if (!testActual || !testActual.series || indexSerieActual >= testActual.series.length) return
 
       const serie = testActual.series[indexSerieActual]
-
       serie.shuffleOptions()
 
       const contenedorOpcions = document.getElementById("contenidor-opcions")
-      if (!contenedorOpcions) {
-        console.error("Element 'contenidor-opcions' not found")
-        return
-      }
+      if (!contenedorOpcions) return
 
       contenedorOpcions.innerHTML = ""
       contenedorOpcions.appendChild(TestRenderer.renderOptions(serie.options, DragDropHandler.handleDragStart))
@@ -495,10 +444,7 @@ const App = (() => {
       const titolElement = document.getElementById("titol-feedback")
       const missatgeElement = document.getElementById("missatge-feedback")
 
-      if (!alerta || !titolElement || !missatgeElement) {
-        console.error("Feedback elements not found")
-        return
-      }
+      if (!alerta || !titolElement || !missatgeElement) return
 
       titolElement.textContent = titol
       missatgeElement.textContent = tipus === "exit" ? "Bé fet!" : "Resposta incorrecta, torna-ho a provar."
@@ -517,9 +463,11 @@ const App = (() => {
     },
 
     desarPuntuacio: async function () {
+      isSubmittingScore = true // Set flag to prevent double submission
+
       const inputNom = document.getElementById("nom-jugador")
       if (!inputNom) {
-        console.error("Element 'nom-jugador' not found")
+        isSubmittingScore = false
         return
       }
 
@@ -527,16 +475,18 @@ const App = (() => {
       const nameRegex = /^[a-zA-Z0-9]+(?:\s[a-zA-Z0-9]+)*$/
       if (!nameRegex.test(nomJugador)) {
         alert("El nom només pot contenir lletres, números i espais. Torna-ho a provar.")
+        isSubmittingScore = false
         return
       }
 
       if (!nomJugador) {
         alert("Si us plau, introdueix el teu nom")
+        isSubmittingScore = false
         return
       }
 
       if (!testActual) {
-        console.error("Cannot save score: no active test")
+        isSubmittingScore = false
         return
       }
 
@@ -553,17 +503,17 @@ const App = (() => {
         }
 
         await this.carregarPuntuacions()
-
         inputNom.value = ""
 
         setTimeout(() => {
           this.mostrarPantalla("pantalla-bienvinguda")
+          isSubmittingScore = false // Reset flag after completion
         }, 3000)
 
         registrarAccio(`Puntuació desada: ${nomJugador} - ${puntuacio}`)
       } catch (error) {
-        console.error("Error saving score:", error)
         alert("Error en desar la puntuació. Torna-ho a provar.")
+        isSubmittingScore = false // Reset flag on error
       }
     },
 

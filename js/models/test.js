@@ -38,13 +38,10 @@ class Test extends BaseModel {
     return this.series.length * 100
   }
 
-  /**
-   * Barreja totes les sèries del test
-   * Implementación de método para usar en polimorfismo
-   */
+
   shuffleAllSeries() {
     this.series.forEach((serie) => {
-      // Polimorfismo: llamamos al método shuffleOptions de cada serie
+      // Aqui s'aplica el polimorfisme
       if (serie.shuffleOptions) {
         serie.shuffleOptions()
       }

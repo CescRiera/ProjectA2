@@ -6,7 +6,6 @@ const DBService = {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open("TestDB", 1)
       request.onerror = (e) => {
-        console.error("Error en obrir la BD", e)
         reject(e)
       }
       request.onsuccess = (e) => {

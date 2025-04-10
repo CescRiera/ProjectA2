@@ -57,7 +57,7 @@ const CollectionUtils = {
   },
 
   /**
-   * Filtra un array segons una funció de predicat
+   * Filtra un   segons una funció de predicat
    * @param {Array} array - Array a filtrar
    * @param {Function} predicateFn - Funció de predicat
    * @returns {Array} - Array filtrat
