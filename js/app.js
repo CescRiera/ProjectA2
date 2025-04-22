@@ -12,7 +12,7 @@ const App = (() => {
   let puntuacio = 0
   let tempsRestant = 0
   let timerInterval = null
-  let isSubmittingScore = false // Flag to prevent double submission
+  let isSubmittingScore = false
 
   const historialAccions = CollectionUtils.createStack()
   const accionsPendents = CollectionUtils.createQueue()

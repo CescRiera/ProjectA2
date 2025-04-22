@@ -1,70 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Figure Series Challenge</title>
+    <title>Repte de Sèries de Figures</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <!-- Welcome Screen -->
         <section id="pantalla-bienvinguda" class="pantalla">
             <div class="header">
-                <h1>Figure Series Challenge</h1>
-                <p>Test your pattern recognition skills!</p>
+                <h1>Repte de Sèries de Figures</h1>
+                <p>Posa a prova les teves habilitats de reconeixement de patrons!</p>
             </div>
             
             <div class="content-grid">
                 <div class="card">
                     <div class="card-header">
-                        <h2>Available Tests</h2>
-                        <p>Choose a test to start the challenge</p>
+                        <h2>Proves Disponibles</h2>
+                        <p>Escull una prova per començar el repte</p>
                     </div>
                     <div class="card-content">
                         <div id="llista-tests" class="test-list">
-                            <div class="loading">Loading tests...</div>
+                            <div class="loading">Carregant proves...</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <h2>High Scores</h2>
-                        <p>Top performers in the challenges</p>
+                        <h2>Millors Puntuacions</h2>
+                        <p>Els millors participants als reptes</p>
                     </div>
                     <div class="card-content">
                         <div id="llista-puntuacions" class="high-scores">
-                            <div class="loading">Loading scores...</div>
+                            <div class="loading">Carregant puntuacions...</div>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="instructions">
-                <h2>How to Play</h2>
+                <h2>Com Jugar</h2>
                 <ol>
-                    <li>Select a test from the list above</li>
-                    <li>Observe the pattern in the figure series</li>
-                    <li>Drag the correct figure to complete the pattern</li>
-                    <li>Complete as many patterns as you can before time runs out</li>
-                    <li>Submit your score to see how you rank!</li>
+                    <li>Selecciona una prova de la llista anterior</li>
+                    <li>Observa el patró a la sèrie de figures</li>
+                    <li>Arrossega la figura correcta per completar el patró</li>
+                    <li>Completa tants patrons com puguis abans que s'acabi el temps</li>
+                    <li>Envia la teva puntuació per veure com et classifiques!</li>
                 </ol>
             </div>
         </section>
         
-        <!-- Test Screen -->
         <section id="pantalla-test" class="pantalla amagat">
             <div class="test-header">
                 <div class="test-info">
                     <h1 id="nom-test"></h1>
                     <div class="test-meta">
                         <div class="progress-info">
-                            <span id="serie-actual">1</span> of <span id="total-series">5</span>
+                            <span id="serie-actual">1</span> de <span id="total-series">5</span>
                         </div>
                         <div class="score-info">
-                            Score: <span id="puntuacio-actual">0</span>
+                            Puntuació: <span id="puntuacio-actual">0</span>
                         </div>
                     </div>
                     <div class="progress-bar">
@@ -83,33 +81,30 @@
             
             <div class="test-container">
                 <div id="contenidor-serie" class="series-container">
-                    <!-- Current series will be rendered here -->
                 </div>
                 
                 <div class="options-section">
-                    <h3>Options:</h3>
+                    <h3>Opcions:</h3>
                     <div id="contenidor-opcions" class="options-container">
-                        <!-- Options will be rendered here -->
                     </div>
                     
                     <div class="actions">
                         <button id="btn-barreja" class="btn btn-outline">
-                            <span class="icon">↻</span> Shuffle Options
+                            <span class="icon">↻</span> Barrejar Opcions
                         </button>
                         <button id="btn-retorna" class="btn btn-primary">
-                            Return to Home
+                            Tornar a l'Inici
                         </button>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- Score Screen -->
         <section id="pantalla-puntuacio" class="pantalla amagat">
             <div class="score-card">
                 <div class="score-header">
-                    <h2>Test Completed!</h2>
-                    <p>Great job! Here's how you did.</p>
+                    <h2>Prova Completada!</h2>
+                    <p>Molt bé! Aquests són els teus resultats.</p>
                 </div>
                 
                 <div class="score-content">
@@ -117,35 +112,35 @@
                         <div class="score-item">
                             <div class="score-icon">🏆</div>
                             <div id="puntuacio-final" class="score-value">0</div>
-                            <div class="score-label">Points</div>
+                            <div class="score-label">Punts</div>
                         </div>
                         
                         <div class="score-item">
                             <div class="score-icon">⏱️</div>
                             <div id="temps-invertit" class="score-value">0:00</div>
-                            <div class="score-label">Time</div>
+                            <div class="score-label">Temps</div>
                         </div>
                     </div>
                     
                     <form id="formulari-puntuacio" class="score-form">
                         <div class="form-group">
-                            <label for="nom-jugador">Enter your name to save your score:</label>
-                            <input type="text" id="nom-jugador" placeholder="Your name" required>
+                            <label for="nom-jugador">Introdueix el teu nom per desar la puntuació:</label>
+                            <input type="text" id="nom-jugador" placeholder="El teu nom" required>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
-                            Save Score
+                            Desar Puntuació
                         </button>
                     </form>
                     
                     <div id="missatge-desar" class="save-success amagat">
-                        <p>Your score has been saved successfully!</p>
+                        <p>La teva puntuació s'ha desat correctament!</p>
                     </div>
                 </div>
                 
                 <div class="score-footer">
                     <button id="btn-retorna-puntuacio" class="btn btn-outline">
-                        Return to Home
+                        Tornar a l'Inici
                     </button>
                 </div>
             </div>
